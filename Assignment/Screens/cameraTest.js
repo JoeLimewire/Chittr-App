@@ -89,7 +89,9 @@ const styles = StyleSheet.create(
 			alignSelf: 'center',
 			margin: 20,
 		},
-    });
+	});
+	
+	//Adding a comment so i can commit to Github
         /*
   Joseph Higgins
   Chittr
