@@ -1,7 +1,7 @@
 
 //============================================================== IMPORTS ==============================================================
 import React, { Component } from 'react';
-import {Text, View, TextInput, Button, StyleSheet,StatusBar} from 'react-native';
+import {Text, View, TextInput, Button, StyleSheet,StatusBar, Alert} from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -33,13 +33,20 @@ class HomeScreen extends Component
 
 	submitLogin()
 	{
-    //PRESSING THE LOGIN BUTTON
+		//PRESSING THE LOGIN BUTTON
+		//Runs whenever Login Is pushed
+		//console.log("EMAIL: "+this.state.email);
+		//console.log("PASSWORD: " + this.state.password);
+    
 		let jsonData = JSON.stringify({
 				email:this.state.email,
 				password:this.state.password
 			});
+			
+		//console.log(jsonData);
     
-    //Post request to API
+	//Post request to API
+ 
 		return fetch("http://10.0.2.2:3333/api/v0.0.5/login/",
 		{
 			method:'POST',
@@ -50,15 +57,17 @@ class HomeScreen extends Component
 			},
 			body: jsonData
 		})
+
 		.then((response) =>
 		{
+			console.log(response);
 			if(response.status == 200)
 			{
-        return response.json();	
-      }
-      else{
-        throw "Response was: " + response.status;
-      }
+        		return response.json();	
+      		}
+      		else{
+        		throw "Response was: " + response.status;
+      		}
 		})
 		.then((responseJson) =>
 		{
@@ -69,10 +78,11 @@ class HomeScreen extends Component
 			console.log("ID: " + reqId + " " + " Token: " + reqToken);
 
 			this.setState({id:reqId});
-      this.setState({token:reqToken});
+			this.setState({token:reqToken});
+			
+			this.storeInfo();
       
-      this.props.navigation.navigate('mainFeed');
-
+      		this.props.navigation.navigate('mainFeed');
 		})
 		.catch((e) =>
 		{
@@ -82,6 +92,26 @@ class HomeScreen extends Component
 		});
 			console.log(e);
 		});
+
+	}
+
+	async storeInfo(){
+		try
+		{
+			//het id and token from state
+			let i = this.state.id;
+			let t = this. state.token;
+			//remove any existing items
+			await AsyncStorage.removeItem('id');
+			await AsyncStorage.removeItem('token');
+			//set the storages
+			await AsyncStorage.setItem('id', i.toString());
+			await AsyncStorage.setItem('token', t.toString());
+		}
+		catch(e)
+		{
+			console.log("Error when stroing credentials: " + e);
+		}
 	}
 
 	async currentID()

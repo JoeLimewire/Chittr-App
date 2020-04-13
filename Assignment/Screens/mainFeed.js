@@ -2,7 +2,7 @@
 //============================================================== IMPORTS ==============================================================
 
 import React, { Component } from 'react';
-import {Text, View, StyleSheet, ScrollView, TouchableOpacity,  Image, Alert,} from 'react-native';
+import {Text, View, StyleSheet, ScrollView, TouchableOpacity, RefreshControl,  Image, Alert,} from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -48,7 +48,7 @@ class mainFeed extends Component
         this.currentID();
         
 		return fetch("http://10.0.2.2:3333/api/v0.0.5/chits?start=" +
-			this.state.start + "&count=" + this.state.count +1)
+			this.state.start + "&count=" + this.state.count + 1)
 		.then((response) =>
 		{
 			console.log("DEBUG: Response code: " + response.status);

@@ -233,7 +233,7 @@ class updateFeed extends Component
     async currentToken()
 	{
         //gets the current token from asyncstorage
-        console.log("!!! TOKEN PACKAGE "+ JSON.stringify(AsyncStorage.getItem('token')));
+        console.log("!!! TOKEN PACKAGE "+ AsyncStorage.getItem('token'));
 
 		try
 		{

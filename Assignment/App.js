@@ -14,7 +14,7 @@ import myProfile from './Screens/myProfile'
 import profileUpdateDetails from './Screens/profileUpdateDetails'
 import cameraTest from './Screens/cameraTest'
 
-//Chreate Stack
+//Create Stack
 const Stack = createStackNavigator();
 
 //============================================================== STACKS ==============================================================
