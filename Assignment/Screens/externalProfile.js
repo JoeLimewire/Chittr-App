@@ -26,7 +26,8 @@ class myProfile extends Component
 			token: null,
 			sections: '',
 			};
-	}
+    }
+
 
 	componentDidMount()
 	{
@@ -49,9 +50,20 @@ class myProfile extends Component
 
 	async getUserDetails()
 	{
+        let item = this.props.route.params;
+        console.log("ATTEMPTING TO RETRIEVE ID");
+        try
+        {
+            
+            console.log("DEBUG: " + JSON.stringify(item.user.user_id));
+            this.setState(ID = JSON.stringify(item.user.user_id));
+        }
+        catch(e){
+            console.log("ERROR: "+ e)
+        }
 		
-		this.setState({ID: await this.currentId()});
-		let ID = this.state.ID;
+		//this.setState({ID: await this.currentId()});
+		let ID = item.user.user_id;
 
 		let url = "http://10.0.2.2:3333/api/v0.0.5/user/" + ID;
 		return fetch(url)
@@ -68,7 +80,7 @@ class myProfile extends Component
 		})
 		.then((responseJson) =>
 		{
-			console.log("!!! Response: " + JSON.stringify(responseJson))
+            console.log("!!! Response: " + JSON.stringify(responseJson))
 			console.log((responseJson)['recent_chits']);
 			let forename = (responseJson)['given_name'];
 			let surname = (responseJson)['family_name'];
@@ -96,7 +108,9 @@ class myProfile extends Component
 	async currentPhoto(id)
 	{
 		
+
 		let url = "http://10.0.2.2:3333/api/v0.0.5/user/" + id + "/photo";
+
 
 
 		RNFetchBlob.fetch('GET',url)
@@ -104,37 +118,14 @@ class myProfile extends Component
 		{
 			let image = response.base64();
 			this.setState({photo : "data:image/png;base64," + image});
-			console.log("Got photo...");
 		})
 		.catch((e) =>
 		{
-			console.log("Error on getting photo: " + e);
+			console.log(e);
 		});
 	}
 
-	async updatePhoto(photo)
-	{
-		
-
-		let token = await this.currentToken();
-		let url = "http://10.0.2.2:3333/api/v0.0.5/user/photo";
-
-		fetch(url,
-	{
-			method: 'POST',
-			headers:
-			{
-				'X-Authorization': token,
-				'Content-Type': 'application/octet-stream',
-			},
-			body: photo,
-		})
-		.catch((e) =>
-		{
-			console.log(e)
-		});
-	}
-
+	
     async currentId()
 	{
 		try
@@ -165,37 +156,7 @@ class myProfile extends Component
 			console.log("DEBUG: Failed to get id: " + e);
 			this.props.navigation.navigate('Logout');
 		}
-	}
-	
-	logout(){
-
-		console.log(" Attempting to Logout... ")
-		return fetch("http://10.0.2.2:3333/api/v0.0.5/logout/",
-		{
-			method:'POST',
-			headers:
-				{
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-					'token': this.currentToken(),
-				},
-		})
-		.then((response) =>
-		{
-			if(response.status == 200)
-			{
-				this.props.navigation.navigate('HomeScreen');
-				return response.json();	
-      		}
-      		else{
-        		throw "Response was: " + response.status;
-      		}
-		})
-		.catch((response) => {
-			console.log("DEBUG: " + response);
-			return false;
-		});
-	}
+    }
     
 
 //============================================================== PAGE RENDER ==============================================================
@@ -207,31 +168,18 @@ class myProfile extends Component
 					style={styles.profilePhoto}
 					source={{uri:this.state.photo}}
 				/>
-				<Button
+                <Button
 					style={styles.buttonButton}
                     title={'FOLLOW'}
-                    color ="grey"				
+                    color ="yellowgreen"				
 				/>
 				<View>
 					<View>
-					<Text style={styles.subtitle}>{this.state.forename + " " + this.state.surname}</Text>
-						<Text  style={styles.subtitle}>Email: {this.state.email}</Text>
+						<Text style={styles.subtitle}>{this.state.forename +" "+ this.state.surname}</Text>
+						<Text  style={{padding:0, fontSize:20}}>Email: {this.state.email}</Text>
 					</View>
 					<View style={styles.buttonContainer}>
-						<Button title={'Update Profile'} color ="yellowgreen"onPress={() => this.props.navigation.navigate('profileUpdateDetails')}/>
-                        
-                        <Button
-					style={styles.changePhotoButton}
-                    title={'Change Profile Photo'}
-                    color ="darkgreen"
-					onPress={() => this.props.navigation.navigate('cameraTest',true)}
-				/>
-				<Button
-					style={styles.buttonButton}
-                    title={'LOGOUT'}
-                    color ="darkred"
-					onPress={() => this.logout()}
-				/>
+						
 					
                     </View>
 				</View>
@@ -298,7 +246,7 @@ const styles = StyleSheet.create(
             textAlign: "center",
             color:"#fe9801",
             fontSize:30,
-            padding:20,
+            padding:50,
         },
         textInput: {
             backgroundColor:"#f4eec7",
@@ -316,7 +264,7 @@ const styles = StyleSheet.create(
             paddingTop:30,
             backgroundColor:'#f4eec7',
             flexDirection:'column',
-            
+            height:200,
         },
     
         userImage:{
@@ -328,8 +276,8 @@ const styles = StyleSheet.create(
             fontSize:25,
             color:'#fe9801',
             position:'absolute',
-            left:100,
-            top:10
+            left:60,
+            top:0
         },
         userLocation:{
             alignSelf:'flex-end',

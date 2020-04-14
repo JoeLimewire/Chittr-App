@@ -27,8 +27,12 @@ class cameraTest extends Component
 			const data = await this.camera.takePictureAsync(options);
 			this.setState({photo: data});
 
+			let help = this.props.route.params;
+			console.log("DEBUG: " + help);
+
+
             //NEED TO IDENTIFY WHAT PAGE
-			if(this.props.route.params?.profile)
+			if(help)
 			{
 
 				this.props.navigation.navigate('myProfile', {photo: data});

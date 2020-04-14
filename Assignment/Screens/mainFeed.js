@@ -18,7 +18,8 @@ class mainFeed extends Component
 		{
 			start: 0,
 			count: 20,
-			chits: [],
+            chits: [],
+            refresh:false,
 		};
     }
 
@@ -65,14 +66,21 @@ class mainFeed extends Component
 		.then((responseJson) =>
 		{
             //Got Chits sucessfully
-			this.setState({chits: responseJson});
+            this.setState({chits: responseJson});
 		})
 		 .catch((error) =>
 		 {
 			this.state.error = error;
-		 });
+         });
 	}
     
+    _onRefresh(){
+            console.log("Refreshing...");
+            this.setState({refreshing:true});
+            this.getScrollChunk().then(() =>{
+                this.setState({refreshing:false});
+            });
+    }
 	
     
 //============================================================== PAGE RENDER ==============================================================
@@ -80,21 +88,29 @@ class mainFeed extends Component
     render(){
 		return(
 		<View>
-			
             <View>
-				<ScrollView >
+				<ScrollView refreshControl={<RefreshControl refreshing={this.state.refresh}onRefresh={this._onRefresh.bind(this)}/>}>
                         { this.state.chits.map((item) => {
                             return(
                                 <View style = {styles.chit}>
-                                    
+                                    <TouchableOpacity
+                                    style={styles.listButton}
+                                    onPress={() =>
+                                    {
+                                        console.log(item.user.user_id);
+                                        this.props.navigation.navigate("external", item);
+                                    }}
+                                >
                                     <Image
                                     style={styles.userImage}
                                     source={{uri: 'https://img.icons8.com/office/64/000000/earth-element.png'}}
                                     />
-                                    <Text style={styles.userName}>{item.user.given_name + " " + item.user.family_name}</Text>
-            
-                                    <Text style={styles.userContent}>{item.chit_content}</Text>
                                     
+                                        
+                                        <Text style={styles.userName}>{item.user.given_name + " " + item.user.family_name}</Text>
+
+                                    <Text style={styles.userContent}>{item.chit_content}</Text>
+                                    </TouchableOpacity>
                                 </View>
                             )
                            })}
@@ -187,6 +203,7 @@ const styles = StyleSheet.create(
         },
         userContent:{
             alignSelf:'stretch',
+            top:40,
             fontSize:18,
             paddingTop:30
     
@@ -203,12 +220,16 @@ const styles = StyleSheet.create(
             justifyContent:"space-around",
         },
         tabButton:{
-           
         },
         tabImage:{
             height:30,
             width:30,
-        }
+        },
+        listButton:{
+            height:500,
+            margin:0,
+            
+        },
 	});
   /*
   Joseph Higgins
