@@ -44,8 +44,8 @@ function MainStackNavigator() {
 export default function App() {
   return <MainStackNavigator />
 }
-  /*
+       /*
   Joseph Higgins
   Chittr
-  Version-0.0.3
+  Version-0.0.6
   */

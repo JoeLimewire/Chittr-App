@@ -238,8 +238,8 @@ const styles = StyleSheet.create(
             
         },
 	});
-  /*
+        /*
   Joseph Higgins
   Chittr
-  Version-0.0.3
+  Version-0.0.6
   */
