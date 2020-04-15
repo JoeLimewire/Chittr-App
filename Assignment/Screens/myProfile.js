@@ -35,7 +35,7 @@ class myProfile extends Component
 		{
 			if(this.props.route.params?.photo)
 			{
-				this.updateProfilePhoto(this.props.route.params.photo).then();
+				this.updatePhoto(this.props.route.params.photo).then();
             }
           
 			this.getUserDetails().then();
@@ -49,7 +49,7 @@ class myProfile extends Component
 
 	async getUserDetails()
 	{
-		
+		console.log("Retrieving user details... ")
 		this.setState({ID: await this.currentId()});
 		let ID = this.state.ID;
 
@@ -68,8 +68,6 @@ class myProfile extends Component
 		})
 		.then((responseJson) =>
 		{
-			console.log("!!! Response: " + JSON.stringify(responseJson))
-			console.log((responseJson)['recent_chits']);
 			let forename = (responseJson)['given_name'];
 			let surname = (responseJson)['family_name'];
 			let email = (responseJson)['email'];
@@ -134,6 +132,7 @@ class myProfile extends Component
 			console.log(e)
 		});
 	}
+	
 
     async currentId()
 	{
@@ -215,7 +214,7 @@ class myProfile extends Component
 				<View>
 					<View>
 					<Text style={styles.subtitle}>{this.state.forename + " " + this.state.surname}</Text>
-						<Text  style={styles.subtitle}>Email: {this.state.email}</Text>
+						<Text  style={{padding:0, fontSize:20}}>Email: {this.state.email}</Text>
 					</View>
 					<View style={styles.buttonContainer}>
 						<Button title={'Update Profile'} color ="yellowgreen"onPress={() => this.props.navigation.navigate('profileUpdateDetails')}/>

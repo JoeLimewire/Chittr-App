@@ -14,6 +14,7 @@ import myProfile from './Screens/myProfile'
 import profileUpdateDetails from './Screens/profileUpdateDetails'
 import cameraTest from './Screens/cameraTest'
 import external from './Screens/externalProfile'
+import followers from './Screens/followers.js'
 
 //Create Stack
 const Stack = createStackNavigator();
@@ -31,6 +32,7 @@ function MainStackNavigator() {
         <Stack.Screen name="profileUpdateDetails" component={profileUpdateDetails} />
         <Stack.Screen name="cameraTest" component={cameraTest} />
         <Stack.Screen name="external" component={external} />
+        <Stack.Screen name="followers" component={followers} />
 
       </Stack.Navigator>
     </NavigationContainer>

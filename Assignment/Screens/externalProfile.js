@@ -1,10 +1,9 @@
 
 //============================================================== IMPORTS ==============================================================
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, ScrollView, Image, Button} from 'react-native';
+import { Text, View, StyleSheet, ScrollView, Image, Button, Alert} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import RNFetchBlob from 'react-native-fetch-blob';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 
 //============================================================== PAGE CLASS & PAGE FUNCTIONS ==============================================================
@@ -147,7 +146,7 @@ class myProfile extends Component
 		try
 		{
 
-			const token = await AsyncStorage.getItem('token');
+	    	const token = await AsyncStorage.getItem('token');
 			console.log("DEBUG: token found: " + token);
 			return token;
 		}
@@ -156,8 +155,129 @@ class myProfile extends Component
 			console.log("DEBUG: Failed to get id: " + e);
 			this.props.navigation.navigate('Logout');
 		}
-    }
-    
+	}
+		
+		async follow(){
+			let token = await this.currentToken();
+			let item = this.props.route.params;
+      console.log("ATTEMPTING TO RETRIEVE ID");
+      try
+        {
+            
+            console.log("DEBUG: " + JSON.stringify(item.user.user_id));
+            this.setState(ID = JSON.stringify(item.user.user_id));
+        }
+        catch(e){
+            console.log("ERROR: "+ e)
+        }
+		
+			//this.setState({ID: await this.currentId()});
+			let ID = item.user.user_id;
+			
+			console.log("RETURNED TOKEN: " + token)
+
+			console.log("Attempting to Follow... " + ID);
+
+			let url = "http://10.0.2.2:3333/api/v0.0.5/user/" + ID + "/follow";
+
+			return fetch(url,
+			{
+				method:'POST',
+				headers:
+				{
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+					'X-Authorization': token
+				},
+			})
+		.then((response) =>
+		{
+			if(response.status == 400){
+				Alert.alert("It appears you already follow this profile.")
+			}
+			if(response.status !== 200)
+			{
+				throw("!!! Response code: " + response.status + " " + ID);
+			}
+			else
+			{
+				return response.json();
+			}
+		})
+		.then((responseJson) =>
+		{
+			console.log("Follow Response: " + JSON.stringify(responseJson));
+			
+	
+		})
+		.catch((e) =>
+		{
+			console.log("DEBUG DUMP")
+			console.log("	Follow Exception: " + e)
+			console.log("	URL: " + url)
+			console.log("	Token: " + token)
+		});
+
+		}
+		//UNFOLLOW
+		async unfollow(){
+			let token = await this.currentToken();
+			let item = this.props.route.params;
+      console.log("ATTEMPTING TO RETRIEVE ID");
+      try
+        {
+            
+            console.log("DEBUG: " + JSON.stringify(item.user.user_id));
+            this.setState(ID = JSON.stringify(item.user.user_id));
+        }
+        catch(e){
+            console.log("ERROR: "+ e)
+        }
+		
+			let ID = item.user.user_id;
+			
+			console.log("RETURNED TOKEN: " + token)
+
+			console.log("Attempting to Follow... " + ID);
+
+			let url = "http://10.0.2.2:3333/api/v0.0.5/user/" + ID + "/follow";
+
+			return fetch(url,
+			{
+				method:'DELETE',
+				headers:
+				{
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+					'X-Authorization': token
+				},
+			})
+			.then((response) =>
+			{
+				if(response.status !== 200)
+				{
+					throw("!!! Response code: " + response.status + " " + ID);
+				}
+				else
+				{
+					return response.json();
+				}
+			})
+			.then((responseJson) =>
+			{
+				console.log("Follow Response: " + JSON.stringify(responseJson));
+				
+		
+			})
+			.catch((e) =>
+			{
+				console.log("DEBUG DUMP")
+				console.log("	Follow Exception: " + e)
+				console.log("	URL: " + url)
+				console.log("	Token: " + token)
+			});
+
+		}
 
 //============================================================== PAGE RENDER ==============================================================
 
@@ -168,10 +288,19 @@ class myProfile extends Component
 					style={styles.profilePhoto}
 					source={{uri:this.state.photo}}
 				/>
-                <Button
-					style={styles.buttonButton}
-                    title={'FOLLOW'}
-                    color ="yellowgreen"				
+          <Button
+					  style={styles.buttonButton}
+            title={'FOLLOW'}
+					  color ="yellowgreen"
+						onPress={()=>this.follow()}
+														
+				/>
+				<Button
+					  style={styles.buttonButton}
+            title={'UNFOLLOW'}
+					  color ="darkred"
+						onPress={()=>this.unfollow()}
+														
 				/>
 				<View>
 					<View>
@@ -181,25 +310,23 @@ class myProfile extends Component
 					<View style={styles.buttonContainer}>
 						
 					
-                    </View>
+          </View>
 				</View>
 				<View>
 				<ScrollView>
-                        { this.state.chits.map((item) => {
-                            return(
-                                <View style = {styles.chit}>
-                                    <Image
-                                    style={styles.userImage}
-                                    source={{uri: 'https://img.icons8.com/office/64/000000/earth-element.png'}}
-                                    />
+          { this.state.chits.map((item) => {
+            return(
+                <View style = {styles.chit}>
+                  <Image
+                    style={styles.userImage}
+                    source={{uri: 'https://img.icons8.com/office/64/000000/earth-element.png'}}
+                  />
                                         
-                                        <Text style={styles.userName}>{this.state.forename + " " + this.state.surname}</Text>
-
-                                    <Text style={styles.userContent}>{item.chit_content}</Text>
-                                </View>
-                            )
-                           })}
-					
+                  <Text style={styles.userName}>{this.state.forename + " " + this.state.surname}</Text>
+                	<Text style={styles.userContent}>{item.chit_content}</Text>
+                </View>
+                )
+          })}
 				</ScrollView>
                 </View>
 			</View>
